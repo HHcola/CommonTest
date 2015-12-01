@@ -1,0 +1,52 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
+
+
+    <Button
+        android:id="@+id/queue_test"
+        android:layout_width="match_parent"
+        android:layout_height="30dip"
+        android:background="@android:color/holo_blue_light"
+        android:text="队列测试"
+        android:textSize="13dp"
+        />
+
+
+    <Button
+        android:id="@+id/socket_test"
+        android:layout_width="match_parent"
+        android:layout_height="30dip"
+        android:layout_below="@+id/queue_test"
+        android:layout_marginTop="20dip"
+        android:background="@android:color/holo_blue_light"
+        android:text="socket 下载测试"
+        android:textSize="13dp"
+        />
+
+    <Button
+        android:id="@+id/package_install_test"
+        android:layout_width="match_parent"
+        android:layout_height="30dip"
+        android:layout_below="@+id/socket_test"
+        android:layout_marginTop="20dip"
+        android:background="@android:color/holo_blue_light"
+        android:text="安装广播测试"
+        android:textSize="13dp"
+        />
+
+
+    <Button
+        android:id="@+id/jni_test"
+        android:layout_width="match_parent"
+        android:layout_height="30dip"
+        android:layout_below="@+id/socket_test"
+        android:layout_marginTop="20dip"
+        android:background="@android:color/holo_blue_light"
+        android:text="jni测试"
+        android:textSize="13dp"
+        />
+</RelativeLayout>
