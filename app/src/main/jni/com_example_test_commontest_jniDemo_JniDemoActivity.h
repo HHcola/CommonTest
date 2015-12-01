@@ -16,13 +16,23 @@ JNIEXPORT jstring JNICALL Java_com_example_test_commontest_jniDemo_JniDemoActivi
   (JNIEnv *, jobject);
 
 
-
 /**
  *
  */
 JNIEXPORT jstring JNICALL
 Java_com_example_test_commontest_jniDemo_JniDemoActivity_createFile(JNIEnv *env, jobject instance,
                                                                     jstring fileName_) ;
+
+
+/**
+ * tcp 通信
+ */
+JNIEXPORT void JNICALL
+        Java_com_example_test_commontest_jniDemo_JniDemoActivity_nativeStartTcpServer(JNIEnv *env,
+                                                                                      jobject instance,
+                                                                                      jint port);
+
+
 #ifdef __cplusplus
 }
 #endif

@@ -4,6 +4,7 @@
 
 #include "com_example_test_commontest_jniDemo_JniDemoActivity.h"
 #include "file.h"
+#include "jniSocket.h"
 #include <android/log.h>
 
 #define ENABLE_DEBUG 1
@@ -36,4 +37,14 @@ Java_com_example_test_commontest_jniDemo_JniDemoActivity_createFile(JNIEnv *env,
     env->ReleaseStringUTFChars(fileName_, fileName);
 
     return env->NewStringUTF("create file success");
+}
+
+JNIEXPORT void JNICALL
+Java_com_example_test_commontest_jniDemo_JniDemoActivity_nativeStartTcpServer(JNIEnv *env,
+                                                                              jobject instance,
+                                                                              jint port) {
+
+    jniSocket jniSocket;
+    jniSocket.createTcpSocket(env, instance);
+
 }
