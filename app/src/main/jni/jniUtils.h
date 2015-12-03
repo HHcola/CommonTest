@@ -8,7 +8,7 @@
 #include <jni.h>
 
 #define MAX_LOG_MESSAGE_LENGTH 256
-#define MAX_BUFFER_SIZE = 80
+#define MAX_BUFFER_SIZE  80
 
 
 static void LogMessage(JNIEnv *env, jobject obj, const char * format, ...) {
@@ -46,7 +46,7 @@ static void ThrowException(JNIEnv *env, const char *className, const char *messa
     }
 }
 
-static void ThrowErrnoException(JNIEnv * evn, const char * className, int errnum) {
+static void ThrowErrnoException(JNIEnv * env, const char * className, int errnum) {
     char buffer[MAX_BUFFER_SIZE];
 
     if (-1 == strerror_r(errnum, buffer, MAX_LOG_MESSAGE_LENGTH)) {

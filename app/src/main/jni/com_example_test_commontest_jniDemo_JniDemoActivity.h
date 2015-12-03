@@ -30,7 +30,9 @@ Java_com_example_test_commontest_jniDemo_JniDemoActivity_createFile(JNIEnv *env,
 JNIEXPORT void JNICALL
         Java_com_example_test_commontest_jniDemo_JniDemoActivity_nativeStartTcpServer(JNIEnv *env,
                                                                                       jobject instance,
-                                                                                      jint port);
+                                                                                      jstring ip,
+                                                                                      jint port,
+                                                                                      jstring message);
 
 
 #ifdef __cplusplus

@@ -47,6 +47,6 @@ public class JniDemoActivity extends Activity {
 
     public native String createFile(String fileName);
 
-    private native void nativeStartTcpServer(int port) throws Exception;
+    private native void nativeStartTcpServer(String ip, int port, String message) throws Exception;
 
 }
