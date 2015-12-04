@@ -49,7 +49,7 @@ void jniSocket::bindSocketToPort(JNIEnv *env, jobject obj, int sd, unsigned shor
     // convert port to network byte order
     address.sin_port = htons(port);
 
-    LogMessage(env, obj, "Binding to port % d", port);
+    LogMessage(env, obj, "Binding to port %d", port);
 
     // sockaddr方便函数传递，sockaddr_in方便用户设定，所以需要的时候在这2者之间切换
     if (-1 == bind(sd, (struct sockaddr *) & address, sizeof(address))) {
@@ -137,9 +137,11 @@ ssize_t jniSocket::receiverFromSocket(JNIEnv *env, jobject obj, int sd, char *bu
 ssize_t jniSocket::sendToSocket(JNIEnv *env, jobject obj, int sd,
                                 const char* buffer, size_t bufferSize) {
 
-    LogMessage(env, obj, "Sending to the socket... ");
+    LogMessage(env, obj, "Sending to the socket...  %d", bufferSize);
     ssize_t sentSize = send(sd, buffer, bufferSize, 0);
 
+
+    LogMessage(env, obj, "Sending to the socket sentSize  %d", sentSize);
     if (-1 == sentSize) {
         ThrowErrnoException(env, "java/io/IOException", errno);
     } else {
@@ -155,7 +157,9 @@ ssize_t jniSocket::sendToSocket(JNIEnv *env, jobject obj, int sd,
 
 void jniSocket::connectToAddress(JNIEnv *env, jobject obj, int sd, const char *ip,
                                  unsigned short port) {
-    LogMessage(env, obj, "Connecting to %s:%hu...", ip, port);
+    LogMessage(env, obj, "Connecting to %s:", ip);
+
+    LogMessage(env, obj, "Connecting port %hu:", port);
 
     struct sockaddr_in address;
 
@@ -164,14 +168,17 @@ void jniSocket::connectToAddress(JNIEnv *env, jobject obj, int sd, const char *i
 
     //转换ip
     if (0 == inet_aton(ip, &(address.sin_addr))) {
+        LogMessage(env, obj, "set socket addr");
         ThrowErrnoException(env, "java/io/IOException", errno);
-    } else {
-        address.sin_port = htons(port);
     }
+
+    // set port
+    address.sin_port = htons(port);
 
     if (-1 == connect(sd, (const sockaddr*) &address, sizeof(address))) {
         ThrowErrnoException(env, "java/io/IOException", errno);
-    } else {
-        LogMessage(env, obj, "Connected.");
     }
+
+    LogMessage(env, obj, "Connected.");
 }
+

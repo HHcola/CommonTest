@@ -6,34 +6,25 @@
 #define COMMONTEST_JNIUTILS_H
 
 #include <jni.h>
+#include <android/log.h>
 
 #define MAX_LOG_MESSAGE_LENGTH 256
 #define MAX_BUFFER_SIZE  80
 
+#define  LOG_TAG "JNI-DEMO"
+#define  LOGD(fmt, args...)  __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG, fmt, ##args)
 
 static void LogMessage(JNIEnv *env, jobject obj, const char * format, ...) {
 
-    static jmethodID methodID = NULL;
-    jclass clazz = env->GetObjectClass(obj);
-    methodID = env->GetMethodID(clazz, "logMessage", "(Ljava/lang/String;)V");
-    env->DeleteLocalRef(clazz);
+    char buffer[MAX_BUFFER_SIZE];
 
-    if (methodID != NULL) {
-        char buffer[MAX_BUFFER_SIZE];
+    // 将可变参数输出到字符数组中
+    va_list ap;
+    va_start(ap, format);
+    vsnprintf(buffer, MAX_LOG_MESSAGE_LENGTH, format, ap);
+    va_end(ap);
 
-        // 将可变参数输出到字符数组中
-        va_list ap;
-        va_start(ap, format);
-        vsnprintf(buffer, MAX_LOG_MESSAGE_LENGTH, format, ap);
-        va_end(ap);
-
-        // 转换成java字符串
-        jstring message = env->NewStringUTF(buffer);
-        if (message != NULL) {
-            env->CallVoidMethod(obj, methodID, message);
-            env->DeleteLocalRef(message);
-        }
-    }
+    LOGD(format, buffer);
 
 }
 
