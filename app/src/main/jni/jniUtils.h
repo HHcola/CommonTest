@@ -7,6 +7,7 @@
 
 #include <jni.h>
 #include <android/log.h>
+#include <errno.h>
 
 #define MAX_LOG_MESSAGE_LENGTH 256
 #define MAX_BUFFER_SIZE  80

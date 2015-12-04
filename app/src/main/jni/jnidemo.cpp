@@ -4,9 +4,8 @@
 
 #include "com_example_test_commontest_jniDemo_JniDemoActivity.h"
 #include "file.h"
-#include "jniSocket.h"
 #include "jniUtils.h"
-#include <android/log.h>
+#include "http.h"
 
 
 JNIEXPORT jstring JNICALL Java_com_example_test_commontest_jniDemo_JniDemoActivity_getStringFromJni
@@ -39,9 +38,10 @@ Java_com_example_test_commontest_jniDemo_JniDemoActivity_nativeStartTcpServer(JN
                                                                               jobjectArray message) {
 
 
-    const char * httpHost = env->GetStringUTFChars(host, NULL);
-    const char * httpPath = env->GetStringUTFChars(path, NULL);
-    HttpGet(httpHost, httpPath);
+//    const char * httpHost = env->GetStringUTFChars(host, NULL);
+//    const char * httpPath = env->GetStringUTFChars(path, NULL);
+//    HttpGet(httpHost, httpPath);
+    SocketTest(env, instance);
 
 //    LogMessage(env, instance, "nagtiveStartTcpServer port");
 //    jniSocket jniSocket;
@@ -143,129 +143,3 @@ void JNICALL Java_com_example_test_commontest_jniDemo_JniDemoActivity_CallByJni(
     env->CallVoidMethod(obj, mid, buffer, length);
 }
 
-
-/**
- * 设置请求头
- */
-void setRequest(JNIEnv *env, jobject obj, jobjectArray messageObj, std::string message) {
-
-    jstring jstr;
-    jsize  len = env->GetArrayLength(messageObj);
-
-    LogMessage(env, obj, "setRequest msg len %d ", len);
-    int i = 0;
-    for(; i < len; i ++) {
-        jstr = (jstring) env->GetObjectArrayElement(messageObj, i);
-        message += env->GetStringUTFChars(jstr, NULL);
-    }
-
-}
-
-
-
-int GetHttpResponseHead(int sock,char *buf,int size)
-{
-    int i;
-    char *code,*status;
-    memset(buf,0,size);
-    for(i=0; i<size-1; i++){
-        if(recv(sock,buf+i,1,0)!=1){
-            perror("recv error");
-            return -1;
-        }
-        if(strstr(buf,"\r\n\r\n"))
-            break;
-    }
-    if(i >= size-1){
-        puts("Http response head too long.");
-        return -2;
-    }
-    code=strstr(buf," 200 ");
-    status=strstr(buf,"\r\n");
-    if(!code || code>status){
-        *status=0;
-        printf("Bad http response:\"%s\"\n",buf);
-        return -3;
-    }
-    return i;
-}
-
-int HttpGet(const char *server,const char *url)
-{
-    __android_log_print(ANDROID_LOG_INFO, "-----from--jni-------", "Enter HttpGet function!");
-    int sock=socket(PF_INET,SOCK_STREAM,0);
-    __android_log_print(ANDROID_LOG_INFO, "-----from--jni-------", "%d",sock);
-    struct sockaddr_in peerAddr;
-    char buf[2048];
-    int ret;
-
-
-    struct sockaddr_in address;
-
-    memset(&address, 0, sizeof(address));
-    address.sin_family = PF_INET;
-
-    //转换ip
-    if (0 == inet_aton(server, &(address.sin_addr))) {
-        __android_log_print(ANDROID_LOG_INFO, "-----from--jni-------", "inet_aton error!");
-    }
-
-    // set port
-    address.sin_port = 80;
-
-    ret == connect(sock, (const sockaddr*) &address, sizeof(address));
-    if(ret != 0){
-        __android_log_print(ANDROID_LOG_INFO, "-----from--jni-------", "connect failed!");
-        close(sock);
-        return -1;
-    }
-    sprintf(buf,
-            "GET %s HTTP/1.0\r\n"
-                    "Accept: */*\r\n"
-                    "Host: %s\r\n"
-                    "Connection: Close\r\n\r\n",
-            url,server);
-    send(sock,buf,strlen(buf),0);
-    if(GetHttpResponseHead(sock,buf,sizeof(buf))<1){
-        close(sock);
-        __android_log_print(ANDROID_LOG_INFO, "-----from--jni-------", "GetHttpResponse error!");
-        return -1;
-    }
-
-    __android_log_print(ANDROID_LOG_INFO, "-----from--jni-------", "Enter HttpGet function's while!");
-    while((ret=recv(sock,buf,sizeof(buf),0)) > 0)
-    {
-        //fwrite(buf,ret,1,fp);
-        __android_log_print(ANDROID_LOG_INFO, "-----from--jni-------", "hello, this is my number %s log message!", buf);
-    }
-    //}
-    //fclose(fp);
-    shutdown(sock,SHUT_RDWR);
-    close(sock);
-    return 0;
-}
-
-//"http://192.168.7.222/index.html"
-int mmain(void)
-{
-    __android_log_print(ANDROID_LOG_INFO, "-----from--jni-------", "Enter mmain function!");
-    char *head,*tail;
-    char server[128]={0};
-
-    head=strstr("http://220.181.111.148/index.html","//");
-    if(!head){
-        puts("Bad url format");
-        return -1;
-    }
-    head+=2;
-    tail=strchr(head,'/');
-    if(!tail){
-        return HttpGet(head,"/");
-    }else if(tail-head>sizeof(server)-1){
-        puts("Bad url format");
-        return -1;
-    }else{
-        memcpy(server,head,tail-head);
-        return HttpGet(server,tail);
-    }
-}

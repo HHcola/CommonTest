@@ -15,6 +15,7 @@ android {
             moduleName "myLib"
             ldLibs "log"
             stl "gnustl_static"
+
         }
     }
 
